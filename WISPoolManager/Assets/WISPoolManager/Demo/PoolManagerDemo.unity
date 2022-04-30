@@ -243,13 +243,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8bd3e4e4390b3c46a891c8f3e0b997d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setAsSingletonInstance: 0
   shouldInitializeOnStart: 1
   pools:
-  - poolTag: cube
-    poolObject: {fileID: 2022433494080448687, guid: b3f8d5786b9e84d4ab958f55981db127,
-      type: 3}
-    initialCount: 10
-    shouldExpand: 1
+  - {fileID: 11400000, guid: 5a001c1386a113a49a290d261710f96e, type: 2}
 --- !u!4 &965157837
 Transform:
   m_ObjectHideFlags: 0

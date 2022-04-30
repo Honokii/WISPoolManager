@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using WISPoolManager;
 
 public class DemoManager : MonoBehaviour {
@@ -12,7 +9,7 @@ public class DemoManager : MonoBehaviour {
     
     private void FixedUpdate() {
         if (currentPulse >= pulse) {
-            var cube = PoolManager.GetPoolable("cube");
+            var cube = _poolManager.GetPoolable("cube");
             currentPulse = 0;
         }
 

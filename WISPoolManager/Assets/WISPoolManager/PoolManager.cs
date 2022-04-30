@@ -3,27 +3,29 @@ using UnityEngine;
 
 namespace WISPoolManager {
     public class PoolManager : MonoBehaviour {
-        private static PoolManager _instance;
+        public static PoolManager Instance;
         
-        private Dictionary<string, Queue<Poolable>> availablePools = new Dictionary<string, Queue<Poolable>>();
+        private readonly Dictionary<string, Queue<Poolable>> _availablePools = new Dictionary<string, Queue<Poolable>>();
+        
+        [SerializeField] private bool setAsSingletonInstance = true;
         
         [SerializeField] private bool shouldInitializeOnStart = true;
+        
         [SerializeField] private List<Pool> pools = new List<Pool>();
 
         #region Unity Methods
 
         private void Start() {
-            if (_instance != null)
-                return;
-            
-            _instance = this;
+            if (setAsSingletonInstance && Instance != this)
+                Instance = this;
+
             if (shouldInitializeOnStart) 
                 InitializePools();
         }
 
         private void OnDestroy() {
-            if (_instance == this)
-                _instance = null;
+            if (setAsSingletonInstance && Instance == this)
+                Instance = null;
         }
 
         #endregion
@@ -37,21 +39,19 @@ namespace WISPoolManager {
                 for (var i = 0; i < pool.initialCount; i++) {
                     var pooledObject = Instantiate(poolObject, this.transform);
                     pooledObject.gameObject.SetActive(false);
+                    pooledObject.poolTag = poolTag;
                     queue.Enqueue(pooledObject);
                 }
                 
-                availablePools.Add(poolTag, queue);
+                _availablePools.Add(poolTag, queue);
             }
         }
 
-        public static Poolable GetPoolable(string poolTag) {
-            var manager = _instance;
-            if (manager == null) return null;
-            
-            if (!manager.availablePools.ContainsKey(poolTag))
+        public Poolable GetPoolable(string poolTag) {
+            if (!_availablePools.ContainsKey(poolTag))
                 return null;
 
-            var availableQueue = manager.availablePools[poolTag];
+            var availableQueue = _availablePools[poolTag];
             
             if (availableQueue.Count > 0) {
                 var obj = availableQueue.Dequeue();
@@ -59,23 +59,20 @@ namespace WISPoolManager {
                 return obj;
             }
 
-            var poolInfo = manager.pools.Find(x => x.poolTag == poolTag);
+            var poolInfo = pools.Find(x => x.poolTag == poolTag);
             if (!poolInfo.shouldExpand) return null;
             
-            var pooledObject = Instantiate(poolInfo.poolObject, manager.transform);
+            var pooledObject = Instantiate(poolInfo.poolObject, transform);
             return pooledObject;
         }
 
-        public static void DisablePoolable(Poolable poolable) {
-            var manager = _instance;
-            if (manager == null) return;
-
-            if (!manager.availablePools.ContainsKey(poolable.poolTag)) {
+        public void DisablePoolable(Poolable poolable) {
+            if (!_availablePools.ContainsKey(poolable.poolTag)) {
                 Destroy(poolable.gameObject);
                 return;
             }
 
-            var queue = manager.availablePools[poolable.poolTag];
+            var queue = _availablePools[poolable.poolTag];
             queue.Enqueue(poolable);
             poolable.gameObject.SetActive(false);
         }

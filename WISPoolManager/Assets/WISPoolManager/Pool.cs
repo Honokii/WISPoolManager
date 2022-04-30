@@ -1,14 +1,16 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace WISPoolManager {
     
-    [Serializable]
-    public class Pool {
+    [CreateAssetMenu(menuName = "Pool Manager/Pool", fileName = "NewPool", order = 0)]
+    public class Pool : ScriptableObject {
+        
         public string poolTag;
+        
         public Poolable poolObject;
+        
         public int initialCount;
+        
         public bool shouldExpand;
     }
 }
