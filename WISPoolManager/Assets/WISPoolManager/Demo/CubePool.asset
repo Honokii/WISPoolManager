@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f56aa7277ec45e1988d65858ed62692, type: 3}
   m_Name: CubePool
   m_EditorClassIdentifier: 
-  poolTag: cube
+  poolTag: {fileID: 11400000, guid: 8b8eaf06f435e7643a020fa6c90296a0, type: 2}
   poolObject: {fileID: 2022433494080448687, guid: b3f8d5786b9e84d4ab958f55981db127,
     type: 3}
   initialCount: 5
-  shouldExpand: 1
+  shouldExpand: 0

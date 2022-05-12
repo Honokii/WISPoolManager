@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolManager: {fileID: 965157836}
+  cubeTag: {fileID: 11400000, guid: 8b8eaf06f435e7643a020fa6c90296a0, type: 2}
 --- !u!1 &1690464196
 GameObject:
   m_ObjectHideFlags: 0

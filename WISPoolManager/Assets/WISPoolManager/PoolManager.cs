@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WISPoolManager {
@@ -6,6 +7,7 @@ namespace WISPoolManager {
         public static PoolManager Instance;
         
         private readonly Dictionary<string, Queue<Poolable>> _availablePools = new Dictionary<string, Queue<Poolable>>();
+        private readonly Dictionary<string, Queue<Poolable>> _activePools = new Dictionary<string, Queue<Poolable>>();
         
         [SerializeField] private bool setAsSingletonInstance = true;
         
@@ -43,7 +45,7 @@ namespace WISPoolManager {
                     queue.Enqueue(pooledObject);
                 }
                 
-                _availablePools.Add(poolTag, queue);
+                _availablePools.Add(poolTag.value, queue);
             }
         }
 
@@ -59,20 +61,36 @@ namespace WISPoolManager {
                 return obj;
             }
 
-            var poolInfo = pools.Find(x => x.poolTag == poolTag);
+            var poolInfo = pools.Find(x => x.poolTag.value == poolTag);
             if (!poolInfo.shouldExpand) return null;
             
             var pooledObject = Instantiate(poolInfo.poolObject, transform);
             return pooledObject;
         }
 
+        public Poolable GetPoolable(string poolTag, Transform parent) {
+            var poolable = GetPoolable(poolTag);
+            if (poolable == null)
+                return null;
+
+            poolable.transform.parent = parent;
+            return poolable;
+        }
+
+        public T GetPoolable<T>(string poolTag, Transform parent) {
+            var poolable = GetPoolable(poolTag);
+            poolable.transform.parent = parent;
+            var result = poolable.GetComponent<T>();
+            return result;
+        }
+
         public void DisablePoolable(Poolable poolable) {
-            if (!_availablePools.ContainsKey(poolable.poolTag)) {
+            if (!_availablePools.ContainsKey(poolable.poolTag.value)) {
                 Destroy(poolable.gameObject);
                 return;
             }
 
-            var queue = _availablePools[poolable.poolTag];
+            var queue = _availablePools[poolable.poolTag.value];
             queue.Enqueue(poolable);
             poolable.gameObject.SetActive(false);
         }
